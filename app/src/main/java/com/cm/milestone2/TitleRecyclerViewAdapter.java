@@ -19,10 +19,19 @@ import java.util.List;
  */
 public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlaceholderItem> mValues;
 
-    public TitleRecyclerViewAdapter(List<PlaceholderItem> items) {
-        mValues = items;
+
+    public interface OnItemClickListener {
+        void onItemClick(PlaceholderItem item);
+        void onLongItemClick(PlaceholderItem item);
+    }
+
+    private final List<PlaceholderItem> mValues;
+    private final OnItemClickListener listener;
+
+    public TitleRecyclerViewAdapter(List<PlaceholderItem> items, OnItemClickListener listener) {
+        this.mValues = items;
+        this.listener = listener;
     }
 
     @Override
@@ -34,9 +43,8 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.bind(mValues.get(position), listener);
+
     }
 
     @Override
@@ -53,6 +61,25 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
             super(binding.getRoot());
             mIdView = binding.itemNumber;
             mContentView = binding.content;
+        }
+
+        public void bind(final PlaceholderItem item, final OnItemClickListener listener){
+            mIdView.setText(item.id);
+            mContentView.setText(item.content);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onItemClick(item);
+                }
+
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    listener.onLongItemClick(item);
+                    return true;
+                }
+            });
         }
 
         @Override

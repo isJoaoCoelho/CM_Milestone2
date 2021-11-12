@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.cm.milestone2.placeholder.PlaceholderContent;
 
@@ -64,7 +66,22 @@ public class TitleFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new TitleRecyclerViewAdapter(PlaceholderContent.ITEMS));
+            recyclerView.setAdapter(new TitleRecyclerViewAdapter(PlaceholderContent.ITEMS, new TitleRecyclerViewAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(PlaceholderContent.PlaceholderItem item) {
+                    Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_LONG).show();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.mainLayout, EditFragment.class, null)
+                            .commit();
+                }
+
+                @Override
+                public void onLongItemClick(PlaceholderContent.PlaceholderItem item) {
+                    Toast.makeText(getContext(), "Item Long Clicked", Toast.LENGTH_LONG).show();
+                }
+            }));
+
         }
         return view;
     }
