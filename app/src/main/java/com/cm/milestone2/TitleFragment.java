@@ -1,6 +1,8 @@
 package com.cm.milestone2;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -79,6 +81,23 @@ public class TitleFragment extends Fragment {
                 @Override
                 public void onLongItemClick(PlaceholderContent.PlaceholderItem item) {
                     Toast.makeText(getContext(), "Item Long Clicked", Toast.LENGTH_LONG).show();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                    builder.setTitle(R.string.Opcao).setItems(R.array.PopUpOption, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == 1){
+                                //recyclerView.getAdapter().notifyItemRemoved(Integer.parseInt(item.id)-1);
+
+                            }else{
+                                recyclerView.getAdapter().notifyItemRemoved(Integer.parseInt(item.id)-1);
+                                //recyclerView.getAdapter().notifyItemRangeChanged(Integer.parseInt(item.id)-1,);
+                            }
+
+                        }});
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             }));
 

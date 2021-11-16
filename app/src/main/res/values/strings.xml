@@ -2,4 +2,7 @@
     <string name="app_name">Project</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Opcao">Selecione uma Opção</string>
+    <string name="ok">Apagar</string>
+    <string name="cancel">Cancelar</string>
 </resources>
