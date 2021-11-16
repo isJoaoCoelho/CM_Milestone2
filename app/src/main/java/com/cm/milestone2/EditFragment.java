@@ -55,10 +55,13 @@ public class EditFragment extends Fragment {
         }
     }
 
+    //TODO fazer OnStop para guardar o conteudo do item que recebeu
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        //TODO mostrar conteudo do item que recebeu
         return inflater.inflate(R.layout.fragment_edit, container, false);
     }
 }

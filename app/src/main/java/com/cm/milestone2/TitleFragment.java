@@ -3,6 +3,7 @@ package com.cm.milestone2;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,7 +22,9 @@ import android.widget.Toast;
 import com.cm.milestone2.placeholder.PlaceholderContent;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A fragment representing a list of Items.
@@ -32,6 +35,9 @@ public class TitleFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+
+    //LISTA DE TITLES
+    List<PlaceholderContent.PlaceholderItem>  itemstmep;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,11 +71,20 @@ public class TitleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_title_list, container, false);
 
         // TEMP
-        List<PlaceholderContent.PlaceholderItem>  itemstmep = new ArrayList<PlaceholderContent.PlaceholderItem>();
+        itemstmep = new ArrayList<PlaceholderContent.PlaceholderItem>();
         // Add some sample items.
-        for (int i = 1; i <= 25; i++) {
-            itemstmep.add(new PlaceholderContent.PlaceholderItem(String.valueOf(i),"test " + String.valueOf(i),"vazio"));
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int defaultValueInt = 0;
+        String defaultValueString = null;
+        int size = prefs.getInt("size", defaultValueInt);
+
+        for (int i = 0; i < size; i++) {
+            String title = prefs.getString(String.valueOf(i), defaultValueString);
+
+            itemstmep.add(new PlaceholderContent.PlaceholderItem(String.valueOf(i), title,"bla bla bla"));
         }
+
+
 
 
         // Set the adapter
@@ -86,6 +101,8 @@ public class TitleFragment extends Fragment {
                 public void onItemClick(PlaceholderContent.PlaceholderItem item) {
                     Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_LONG).show();
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    //TODO Criar interface para comunicar com a activity e ser ela a mudar para o EditFragment
+                    //TODO Passar pela interface o item selecionado para a activity o passar para o EditFragment, e este ter acesso ao texto da nota.
                     fragmentManager.beginTransaction()
                             .replace(R.id.mainLayout, EditFragment.class, null)
                             .commit();
@@ -123,6 +140,32 @@ public class TitleFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        for (int i = 0; i< itemstmep.size(); i++){
+            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
+        }
+        prefsEditor.putInt("size", itemstmep.size());
+        prefsEditor.apply();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+
+        for (int i = 0; i< itemstmep.size(); i++){
+            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
+        }
+        prefsEditor.putInt("size", itemstmep.size());
+        prefsEditor.apply();
+    }
+
     private void changetext(PlaceholderContent.PlaceholderItem item, List<PlaceholderContent.PlaceholderItem> itemstmep, RecyclerView recyclerView) {
         // todo: meter tudo em strings e arranjar codigo
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -157,4 +200,5 @@ public class TitleFragment extends Fragment {
         builder.show();
 
     }
+
 }
