@@ -54,9 +54,9 @@ public class PlaceholderContent {
      * A placeholder item representing a piece of content.
      */
     public static class PlaceholderItem {
-        public final String id;
-        public final String content;
-        public final String details;
+        public  String id;
+        public  String content;
+        public  String details;
 
         public PlaceholderItem(String id, String content, String details) {
             this.id = id;
