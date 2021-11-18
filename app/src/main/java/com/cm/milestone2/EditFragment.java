@@ -31,10 +31,6 @@ public class EditFragment extends Fragment {
     private String NoteName;
 
 
-    public EditFragment() {
-        // Required empty public constructor
-    }
-
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
