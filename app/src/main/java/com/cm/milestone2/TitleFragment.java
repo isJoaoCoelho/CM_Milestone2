@@ -17,9 +17,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Toast;
-
-import com.cm.milestone2.placeholder.PlaceholderContent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,7 +37,11 @@ public class TitleFragment extends Fragment {
     private int mColumnCount = 1;
 
     //LISTA DE TITLES
-    List<PlaceholderContent.PlaceholderItem>  itemstmep;
+    List<NoteItemClass>  itemstmep;
+
+    // Global buttons
+    ImageView globalAdd;
+    SearchView globalSearch;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -71,7 +75,12 @@ public class TitleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_title_list, container, false);
 
         // TEMP
-        itemstmep = new ArrayList<PlaceholderContent.PlaceholderItem>();
+        itemstmep = new ArrayList<NoteItemClass>();
+        itemstmep.add(new NoteItemClass("1","test","abcs"));
+        itemstmep.add(new NoteItemClass("2","tost","abcs"));
+        itemstmep.add(new NoteItemClass("3","tcst","abcs"));
+        itemstmep.add(new NoteItemClass("4","tvbost","abcs"));
+
         // Add some sample items.
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         int defaultValueInt = 0;
@@ -81,62 +90,101 @@ public class TitleFragment extends Fragment {
         for (int i = 0; i < size; i++) {
             String title = prefs.getString(String.valueOf(i), defaultValueString);
 
-            itemstmep.add(new PlaceholderContent.PlaceholderItem(String.valueOf(i), title,"bla bla bla"));
+            itemstmep.add(new NoteItemClass(String.valueOf(i), title,"bla bla bla"));
         }
 
-
-
+        // iniclize image buttons
+        globalAdd = view.findViewById(R.id.Add_icon);
+        globalSearch= view.findViewById(R.id.Search_viewtext);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new TitleRecyclerViewAdapter(itemstmep, new TitleRecyclerViewAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(PlaceholderContent.PlaceholderItem item) {
-                    Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_LONG).show();
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    //TODO Criar interface para comunicar com a activity e ser ela a mudar para o EditFragment
-                    //TODO Passar pela interface o item selecionado para a activity o passar para o EditFragment, e este ter acesso ao texto da nota.
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.mainLayout, EditFragment.class, null)
-                            .commit();
-                }
 
-                @Override
-                public void onLongItemClick(PlaceholderContent.PlaceholderItem item) {
-                    Toast.makeText(getContext(), "Item Long Clicked", Toast.LENGTH_LONG).show();
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-                    builder.setTitle(R.string.Opcao).setItems(R.array.PopUpOption, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (which == 0){
-                                //recyclerView.getAdapter().notifyItemRemoved(Integer.parseInt(item.id)-1);
-                                dialog.cancel();
-                                changetext(item,itemstmep,recyclerView);
-
-                            }else{
-                                int location = itemstmep.indexOf(item);
-                                itemstmep.remove(item);
-                                recyclerView.getAdapter().notifyItemRemoved(location);
-                                //recyclerView.getAdapter().notifyItemRangeChanged(location,itemstmep.size());
-
-                            }
-
-                        }});
-
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-            }));
-
+        Context context = view.getContext();
+        RecyclerView recyclerView = view.findViewById(R.id.list);
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+        recyclerView.setAdapter(new TitleRecyclerViewAdapter(itemstmep, new TitleRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(NoteItemClass item) {
+                Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_LONG).show();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                //TODO Criar interface para comunicar com a activity e ser ela a mudar para o EditFragment
+                //TODO Passar pela interface o item selecionado para a activity o passar para o EditFragment, e este ter acesso ao texto da nota.
+                fragmentManager.beginTransaction()
+                        .replace(R.id.mainLayout, EditFragment.class, null)
+                        .commit();
+            }
+
+            @Override
+            public void onLongItemClick(NoteItemClass item) {
+                //Toast.makeText(getContext(), "Item Long Clicked", Toast.LENGTH_LONG).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setTitle(R.string.Opcao).setItems(R.array.PopUpOption, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0){
+                            //recyclerView.getAdapter().notifyItemRemoved(Integer.parseInt(item.id)-1);
+                            dialog.cancel();
+                            changetext(item,itemstmep,recyclerView);
+
+                        }else{
+                            int location = itemstmep.indexOf(item);
+                            itemstmep.remove(item);
+                            recyclerView.getAdapter().notifyItemRemoved(location);
+                            //recyclerView.getAdapter().notifyItemRangeChanged(location,itemstmep.size());
+
+                        }
+
+                    }});
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        }));
+
+
+
+        globalAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Toast.makeText(getContext(), "Entrei no add", Toast.LENGTH_SHORT).show();
+                AddNote(itemstmep,recyclerView);
+
+            }
+        });
+
+        globalSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                // TODO meter numa função em separado
+                // roteger os dados de exeptções
+
+                ArrayList<NoteItemClass> temparray = new ArrayList<NoteItemClass>();
+
+                for (int i = 0; i < itemstmep.size(); i++) {
+
+                    if (itemstmep.get(i).content.contains(s)){
+                        temparray.add(itemstmep.get(i));
+                    }
+
+                }
+
+                itemstmep = temparray;
+                recyclerView.getAdapter().notifyDataSetChanged();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+
         return view;
     }
 
@@ -166,7 +214,7 @@ public class TitleFragment extends Fragment {
         prefsEditor.apply();
     }
 
-    private void changetext(PlaceholderContent.PlaceholderItem item, List<PlaceholderContent.PlaceholderItem> itemstmep, RecyclerView recyclerView) {
+    private void changetext(NoteItemClass item, List<NoteItemClass> itemstmep, RecyclerView recyclerView) {
         // todo: meter tudo em strings e arranjar codigo
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -179,7 +227,7 @@ public class TitleFragment extends Fragment {
 
         builder.setView(edittext);
 
-        builder.setPositiveButton("Yes Option", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
 
@@ -191,7 +239,7 @@ public class TitleFragment extends Fragment {
             }
         });
 
-        builder.setNegativeButton("No Option", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
             }
@@ -200,5 +248,42 @@ public class TitleFragment extends Fragment {
         builder.show();
 
     }
+
+    private void AddNote(List<NoteItemClass> itemstmep, RecyclerView recyclerView) {
+        // todo: meter tudo em strings e arranjar codigo
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        EditText editText = new EditText(getContext());
+
+        final EditText edittext = new EditText(getContext());
+
+        builder.setTitle(R.string.Add_name_title);
+
+        builder.setView(edittext);
+
+        builder.setPositiveButton(R.string.Add_name_value, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String YouEditTextValue = edittext.getText().toString();
+
+                // todo: meter o string id a mudar corretamente para um novo valor
+                NoteItemClass item = new NoteItemClass("3",YouEditTextValue,"");
+
+                // todo: meter com setter and getter os valores de item
+                itemstmep.add(item);
+                recyclerView.getAdapter().notifyItemInserted(itemstmep.size());
+
+            }
+        });
+
+        builder.setNegativeButton(R.string.Cancel_name_value, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
+
 
 }

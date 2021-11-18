@@ -5,4 +5,8 @@
     <string name="Opcao">Selecione uma Opção</string>
     <string name="ok">Apagar</string>
     <string name="cancel">Cancelar</string>
+    <string name="search_text">Search here</string>
+    <string name="Add_name_title">Escolha um Nome</string>
+    <string name="Add_name_value">Adicionar</string>
+    <string name="Cancel_name_value">Cancelar</string>
 </resources>

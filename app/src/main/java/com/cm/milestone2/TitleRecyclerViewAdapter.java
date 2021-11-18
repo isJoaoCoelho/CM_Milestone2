@@ -8,13 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.cm.milestone2.placeholder.PlaceholderContent.PlaceholderItem;
 import com.cm.milestone2.databinding.FragmentTitleBinding;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
+ * {@link RecyclerView.Adapter} that can display a {@link NoteItemClass}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecyclerViewAdapter.ViewHolder> {
@@ -22,14 +21,14 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
 
 
     public interface OnItemClickListener {
-        void onItemClick(PlaceholderItem item);
-        void onLongItemClick(PlaceholderItem item);
+        void onItemClick(NoteItemClass item);
+        void onLongItemClick(NoteItemClass item);
     }
 
-    private final List<PlaceholderItem> mValues;
+    private final List<NoteItemClass> mValues;
     private final OnItemClickListener listener;
 
-    public TitleRecyclerViewAdapter(List<PlaceholderItem> items, OnItemClickListener listener) {
+    public TitleRecyclerViewAdapter(List<NoteItemClass> items, OnItemClickListener listener) {
         this.mValues = items;
         this.listener = listener;
     }
@@ -55,7 +54,7 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView mIdView;
         public final TextView mContentView;
-        public PlaceholderItem mItem;
+        public NoteItemClass mItem;
 
         public ViewHolder(@NonNull FragmentTitleBinding binding) {
             super(binding.getRoot());
@@ -63,7 +62,7 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
             mContentView = binding.content;
         }
 
-        public void bind(final PlaceholderItem item, final OnItemClickListener listener){
+        public void bind(final NoteItemClass item, final OnItemClickListener listener){
             mIdView.setText(item.id);
             mContentView.setText(item.content);
             itemView.setOnClickListener(new View.OnClickListener() {
