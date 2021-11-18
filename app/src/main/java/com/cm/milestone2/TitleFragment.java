@@ -76,10 +76,10 @@ public class TitleFragment extends Fragment {
 
         // TEMP
         itemstmep = new ArrayList<NoteItemClass>();
-        itemstmep.add(new NoteItemClass("1","test","abcs"));
-        itemstmep.add(new NoteItemClass("2","tost","abcs"));
-        itemstmep.add(new NoteItemClass("3","tcst","abcs"));
-        itemstmep.add(new NoteItemClass("4","tvbost","abcs"));
+        //itemstmep.add(new NoteItemClass("1","test","abcs"));
+        //itemstmep.add(new NoteItemClass("2","tost","abcs"));
+        //itemstmep.add(new NoteItemClass("3","tcst","abcs"));
+        //itemstmep.add(new NoteItemClass("4","tvbost","abcs"));
 
         // Add some sample items.
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -109,13 +109,24 @@ public class TitleFragment extends Fragment {
         recyclerView.setAdapter(new TitleRecyclerViewAdapter(itemstmep, new TitleRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NoteItemClass item) {
-                Toast.makeText(getContext(), "Item Clicked", Toast.LENGTH_LONG).show();
+
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 //TODO Criar interface para comunicar com a activity e ser ela a mudar para o EditFragment
                 //TODO Passar pela interface o item selecionado para a activity o passar para o EditFragment, e este ter acesso ao texto da nota.
+//                fragmentManager.beginTransaction()
+//                        .replace(R.id.mainLayout, EditFragment.class, null)
+//                        .commit();
+
+                Bundle arguments = new Bundle();
+                arguments.putString("NoteName", item.content);
+
+                EditFragment myFragment = new EditFragment();
+                myFragment.setArguments(arguments);
+
                 fragmentManager.beginTransaction()
-                        .replace(R.id.mainLayout, EditFragment.class, null)
+                        .replace(R.id.mainLayout, myFragment, null)
                         .commit();
+
             }
 
             @Override
@@ -174,7 +185,9 @@ public class TitleFragment extends Fragment {
                 }
 
                 itemstmep = temparray;
-                recyclerView.getAdapter().notifyDataSetChanged();
+                recyclerView.getAdapter().notifyItemRangeChanged(0,itemstmep.size());
+                //recyclerView.invalidate();
+
                 return true;
             }
 
