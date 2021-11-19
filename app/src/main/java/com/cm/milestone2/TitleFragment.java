@@ -150,6 +150,9 @@ public class TitleFragment extends Fragment {
         //itemstmep.add(new NoteItemClass("3","tcst","abcs"));
         //itemstmep.add(new NoteItemClass("4","tvbost","abcs"));
 
+        // change the name of the toolbar to the name of the project
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+
         // Add some sample items.
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         int defaultValueInt = 0;

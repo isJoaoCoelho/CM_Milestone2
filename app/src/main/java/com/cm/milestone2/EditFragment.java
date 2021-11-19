@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -44,7 +45,6 @@ public class EditFragment extends Fragment {
         MainInterface listener = (MainInterface) getActivity();
         switch (item.getItemId()){
             case R.id.exit_item:
-                Toast.makeText(getContext(), "back clicado", Toast.LENGTH_LONG).show();
 
                 listener.replaceFragment("main");
             case R.id.save_item:
@@ -69,22 +69,9 @@ public class EditFragment extends Fragment {
         EditText contentEdit = view.findViewById(R.id.titleText);
         contentEdit.setText(content);
 
-/*        ImageView returnbtn = view.findViewById(R.id.Arrow_return_icon);
-        TextView notename = view.findViewById(R.id.Edit_note_name);
+        // change the name of the toolbar to the name of the note
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
 
-        // load arguments
-        notename.setText(title);
-
-        returnbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // TODO Maybe mudar para fora, na activity
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction()
-                        .replace(R.id.mainLayout, TitleFragment.class, null)
-                        .commit();
-            }
-        });*/
 
         return view;
     }
