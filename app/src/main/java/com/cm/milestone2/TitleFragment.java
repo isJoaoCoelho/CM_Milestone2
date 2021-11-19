@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +36,8 @@ public class TitleFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+
+    private MainViewModel mViewModel;
 
     //LISTA DE TITLES
     List<NoteItemClass>  itemstmep;
@@ -72,6 +75,7 @@ public class TitleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         View view = inflater.inflate(R.layout.fragment_title_list, container, false);
 
         // TEMP
@@ -110,22 +114,11 @@ public class TitleFragment extends Fragment {
             @Override
             public void onItemClick(NoteItemClass item) {
 
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                //TODO Criar interface para comunicar com a activity e ser ela a mudar para o EditFragment
-                //TODO Passar pela interface o item selecionado para a activity o passar para o EditFragment, e este ter acesso ao texto da nota.
-//                fragmentManager.beginTransaction()
-//                        .replace(R.id.mainLayout, EditFragment.class, null)
-//                        .commit();
+                mViewModel.setTitle(item.content);
+                mViewModel.setContent(item.details);
 
-                Bundle arguments = new Bundle();
-                arguments.putString("NoteName", item.content);
-
-                EditFragment myFragment = new EditFragment();
-                myFragment.setArguments(arguments);
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.mainLayout, myFragment, null)
-                        .commit();
+                MainInterface listener = (MainInterface) getActivity();
+                listener.replaceFragment("edit");
 
             }
 
