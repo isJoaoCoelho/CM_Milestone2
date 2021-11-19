@@ -53,6 +53,7 @@ public class TitleFragment extends Fragment {
     // Global recyclre view and adapter
     RecyclerView recyclerView;
     TitleRecyclerViewAdapter globaladapter;
+    SearchView globalSearchView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -90,10 +91,10 @@ public class TitleFragment extends Fragment {
 
         MenuItem searchmenu = menu.findItem(R.id.search_item_bar);
 
-        SearchView searchView = (SearchView) searchmenu.getActionView();
-        searchView.setQueryHint(getString(R.string.shearch_index_toobar));
+        globalSearchView = (SearchView) searchmenu.getActionView();
+        globalSearchView.setQueryHint(getString(R.string.shearch_index_toobar));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        globalSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 return false;
@@ -161,6 +162,10 @@ public class TitleFragment extends Fragment {
 
                 mViewModel.setTitle(item.content);
                 mViewModel.setContent(item.details);
+
+                // Apaga o querry do search view. Resolve o problema quando se passa para outro fragment enquanto se pesquisa
+                // e todos os dados não procurardos são apagados no recycle view
+                globalSearchView.setQuery("",false);
 
                 MainInterface listener = (MainInterface) getActivity();
                 listener.replaceFragment("edit");
