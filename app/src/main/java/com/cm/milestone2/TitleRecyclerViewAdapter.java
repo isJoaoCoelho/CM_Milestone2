@@ -15,10 +15,6 @@ import com.cm.milestone2.databinding.FragmentTitleBinding;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link NoteItemClass}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     public interface OnItemClickListener {

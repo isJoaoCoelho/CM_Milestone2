@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">NoteTaker</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Opcao">Selecione uma Opção</string>
     <string name="ok">Apagar</string>
@@ -9,4 +8,10 @@
     <string name="Add_name_title">Escolha um Nome</string>
     <string name="Add_name_value">Adicionar</string>
     <string name="Cancel_name_value">Cancelar</string>
+    <string name="shearch_index_toobar">Search here</string>
+    <string name="Context_change_text_label">Escolha o novo Nome</string>
+    <string name="Change_name_string">Mudar</string>
+    <string name="cancel_change_name_string">Cancelar</string>
+    <string name="voltar_btn">Voltar</string>
+    <string name="salvar_btn">Salvar</string>
 </resources>

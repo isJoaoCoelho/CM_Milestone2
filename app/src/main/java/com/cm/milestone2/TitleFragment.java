@@ -38,9 +38,7 @@ import java.util.Set;
  */
 public class TitleFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
 
     private MainViewModel mViewModel;
@@ -63,7 +61,6 @@ public class TitleFragment extends Fragment {
     public TitleFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static TitleFragment newInstance(int columnCount) {
         TitleFragment fragment = new TitleFragment();
@@ -94,8 +91,7 @@ public class TitleFragment extends Fragment {
         MenuItem searchmenu = menu.findItem(R.id.search_item_bar);
 
         SearchView searchView = (SearchView) searchmenu.getActionView();
-        // todo meter como string.xml
-        searchView.setQueryHint("Search here");
+        searchView.setQueryHint(getString(R.string.shearch_index_toobar));
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -114,7 +110,6 @@ public class TitleFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // TODO listener n deu, logo feito desta maneira. Pode ser feito de maneira mais bonita, n sendo necessário
         MainInterface listener = (MainInterface) getActivity();
         if (item.getItemId() == R.id.add_item_bar){
             AddNote(itemstmep,recyclerView);
@@ -240,15 +235,15 @@ public class TitleFragment extends Fragment {
         final EditText edittext = new EditText(getContext());
         edittext.setHint(item.content);
 
-        builder.setTitle("Escolha o novo Nome");
+        builder.setTitle(R.string.Context_change_text_label);
 
         builder.setView(edittext);
 
-        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.Change_name_string, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
 
-                // todo: meter com setter and getter os valores de item
+                // todo: meter com setter and getter os valores de item - CASO ACHEM Q FOR PRECISO
                 int location = itemstmep.indexOf(item);
                 itemstmep.get(location).content = YouEditTextValue;
                 recyclerView.getAdapter().notifyItemChanged(location);
@@ -256,7 +251,7 @@ public class TitleFragment extends Fragment {
             }
         });
 
-        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel_change_name_string, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.cancel();
             }
@@ -267,17 +262,14 @@ public class TitleFragment extends Fragment {
     }
 
     private void AddNote(List<NoteItemClass> itemstmep, RecyclerView recyclerView) {
-        // todo: meter tudo em strings e arranjar codigo
+        // cria dialog box com opção de aceitar ou não e com edittext... altera também no recycler view isso
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         EditText editText = new EditText(getContext());
-
         final EditText edittext = new EditText(getContext());
 
         builder.setTitle(R.string.Add_name_title);
-
         builder.setView(edittext);
-
         builder.setPositiveButton(R.string.Add_name_value, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
@@ -285,7 +277,6 @@ public class TitleFragment extends Fragment {
                 // todo: meter o string id a mudar corretamente para um novo valor
                 NoteItemClass item = new NoteItemClass("3",YouEditTextValue,"");
 
-                // todo: meter com setter and getter os valores de item
                 itemstmep.add(item);
                 recyclerView.getAdapter().notifyItemInserted(itemstmep.size());
 

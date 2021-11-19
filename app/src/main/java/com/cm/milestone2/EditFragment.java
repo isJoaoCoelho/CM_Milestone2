@@ -60,7 +60,7 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //TODO mostrar conteudo do item que recebeu
+        //TODO mostrar conteudo do item que recebeu - sem ser o bla bla bla... Im looking at you balsas
         mViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
         String content = mViewModel.getContent();
