@@ -52,8 +52,9 @@ public class TitleFragment extends Fragment {
     ImageView globalAdd;
     SearchView globalSearch;
 
-    // Global recyclre view
+    // Global recyclre view and adapter
     RecyclerView recyclerView;
+    TitleRecyclerViewAdapter globaladapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -99,27 +100,12 @@ public class TitleFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                // TODO meter numa função em separado
-                // Todo meter com apadter filter
-
-                ArrayList<NoteItemClass> temparray = new ArrayList<NoteItemClass>();
-
-                for (int i = 0; i < itemstmep.size(); i++) {
-
-                    if (itemstmep.get(i).content.contains(s)){
-                        temparray.add(itemstmep.get(i));
-                    }
-
-                }
-
-                itemstmep = temparray;
-                recyclerView.getAdapter().notifyItemRangeChanged(0,itemstmep.size());
-                //recyclerView.invalidate();
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                globaladapter.getFilter().filter(s);
                 return false;
             }
         });
@@ -174,7 +160,7 @@ public class TitleFragment extends Fragment {
         } else {
             recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        recyclerView.setAdapter(new TitleRecyclerViewAdapter(itemstmep, new TitleRecyclerViewAdapter.OnItemClickListener() {
+        globaladapter = new TitleRecyclerViewAdapter(itemstmep, new TitleRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NoteItemClass item) {
 
@@ -212,7 +198,9 @@ public class TitleFragment extends Fragment {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
-        }));
+        });
+
+        recyclerView.setAdapter(globaladapter);
 
         return view;
     }

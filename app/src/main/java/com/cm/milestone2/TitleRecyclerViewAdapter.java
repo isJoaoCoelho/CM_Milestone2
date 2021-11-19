@@ -6,30 +6,33 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.cm.milestone2.databinding.FragmentTitleBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link NoteItemClass}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecyclerViewAdapter.ViewHolder> {
-
-
+public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     public interface OnItemClickListener {
         void onItemClick(NoteItemClass item);
         void onLongItemClick(NoteItemClass item);
     }
 
-    private final List<NoteItemClass> mValues;
+    private List<NoteItemClass> mValues;
+    private List<NoteItemClass> mValuesFull;
     private final OnItemClickListener listener;
 
     public TitleRecyclerViewAdapter(List<NoteItemClass> items, OnItemClickListener listener) {
         this.mValues = items;
+        this.mValuesFull = new ArrayList<>(items);
         this.listener = listener;
     }
 
@@ -86,4 +89,42 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
             return super.toString() + " '" + mContentView.getText() + "'";
         }
     }
+
+    @Override
+    public Filter getFilter() {
+        return searchFilter;
+    }
+
+    private Filter searchFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<NoteItemClass> filteredList = new ArrayList<>();
+
+            if (charSequence == null || charSequence.length() == 0){
+                filteredList.addAll(mValuesFull);
+            } else {
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+
+                for (NoteItemClass item : mValuesFull){
+                    if (item.content.toLowerCase().contains(filterPattern)){
+                        filteredList.add(item);
+                    }
+                }
+
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            mValues.clear();
+            mValues.addAll((List)filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
 }
