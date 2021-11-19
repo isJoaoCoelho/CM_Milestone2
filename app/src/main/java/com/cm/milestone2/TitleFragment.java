@@ -80,17 +80,18 @@ public class TitleFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
+        // allows options in the app bar
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        // todo esta funções e toda pra remover caso n consiga resolver a cena do option menu... deixar ca pro enquanto
-
+        // when the menu is created in the title bar, this function is called. Search listener is in here too
 
         inflater.inflate(R.menu.titles_menu,menu);
 
         MenuItem searchmenu = menu.findItem(R.id.search_item_bar);
+
         SearchView searchView = (SearchView) searchmenu.getActionView();
         // todo meter como string.xml
         searchView.setQueryHint("Search here");
@@ -98,7 +99,23 @@ public class TitleFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                return false;
+                // TODO meter numa função em separado
+                // Todo meter com apadter filter
+
+                ArrayList<NoteItemClass> temparray = new ArrayList<NoteItemClass>();
+
+                for (int i = 0; i < itemstmep.size(); i++) {
+
+                    if (itemstmep.get(i).content.contains(s)){
+                        temparray.add(itemstmep.get(i));
+                    }
+
+                }
+
+                itemstmep = temparray;
+                recyclerView.getAdapter().notifyItemRangeChanged(0,itemstmep.size());
+                //recyclerView.invalidate();
+                return true;
             }
 
             @Override
@@ -107,18 +124,17 @@ public class TitleFragment extends Fragment {
             }
         });
 
-//        MenuItem admenu = menu.findItem(R.id.add_item_bar);
-//        ImageView addView = (ImageView) admenu.getActionView();
-//        // todo meter como string.xml
-//        addView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                AddNote(itemstmep,recyclerView);
-//            }
-//        });
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        // TODO listener n deu, logo feito desta maneira. Pode ser feito de maneira mais bonita, n sendo necessário
+        MainInterface listener = (MainInterface) getActivity();
+        if (item.getItemId() == R.id.add_item_bar){
+            AddNote(itemstmep,recyclerView);
+        }
 
-
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -146,12 +162,8 @@ public class TitleFragment extends Fragment {
             itemstmep.add(new NoteItemClass(String.valueOf(i), title,"bla bla bla"));
         }
 
-        // iniclize image buttons
-        globalAdd = view.findViewById(R.id.Add_icon);
-        globalSearch= view.findViewById(R.id.Search_viewtext);
 
         // Set the adapter
-
         Context context = view.getContext();
         recyclerView = view.findViewById(R.id.list);
         if (mColumnCount <= 1) {
@@ -198,47 +210,6 @@ public class TitleFragment extends Fragment {
                 dialog.show();
             }
         }));
-
-
-
-        globalAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Toast.makeText(getContext(), "Entrei no add", Toast.LENGTH_SHORT).show();
-                AddNote(itemstmep,recyclerView);
-
-            }
-        });
-
-        globalSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                // TODO meter numa função em separado
-                // roteger os dados de exeptções
-
-                ArrayList<NoteItemClass> temparray = new ArrayList<NoteItemClass>();
-
-                for (int i = 0; i < itemstmep.size(); i++) {
-
-                    if (itemstmep.get(i).content.contains(s)){
-                        temparray.add(itemstmep.get(i));
-                    }
-
-                }
-
-                itemstmep = temparray;
-                recyclerView.getAdapter().notifyItemRangeChanged(0,itemstmep.size());
-                //recyclerView.invalidate();
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-
 
         return view;
     }
