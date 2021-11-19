@@ -6,6 +6,9 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -15,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -46,6 +52,9 @@ public class TitleFragment extends Fragment {
     ImageView globalAdd;
     SearchView globalSearch;
 
+    // Global recyclre view
+    RecyclerView recyclerView;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -70,6 +79,46 @@ public class TitleFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        // todo esta funções e toda pra remover caso n consiga resolver a cena do option menu... deixar ca pro enquanto
+
+
+        inflater.inflate(R.menu.titles_menu,menu);
+
+        MenuItem searchmenu = menu.findItem(R.id.search_item_bar);
+        SearchView searchView = (SearchView) searchmenu.getActionView();
+        // todo meter como string.xml
+        searchView.setQueryHint("Search here");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+
+//        MenuItem admenu = menu.findItem(R.id.add_item_bar);
+//        ImageView addView = (ImageView) admenu.getActionView();
+//        // todo meter como string.xml
+//        addView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                AddNote(itemstmep,recyclerView);
+//            }
+//        });
+
+
+
     }
 
     @Override
@@ -104,7 +153,7 @@ public class TitleFragment extends Fragment {
         // Set the adapter
 
         Context context = view.getContext();
-        RecyclerView recyclerView = view.findViewById(R.id.list);
+        recyclerView = view.findViewById(R.id.list);
         if (mColumnCount <= 1) {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         } else {

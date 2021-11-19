@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
         android:layout_marginBottom="20dp"
-        android:background="@color/teal_700"
+        android:background="@color/cardview_dark_background"
         android:foreground="?android:attr/selectableItemBackground">
 
         <TextView
@@ -21,6 +21,15 @@
             android:textColor="@color/white"
             android:text="@string/app_name"/>
 
+        <ImageView
+            android:id="@+id/Add_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:src="@drawable/ic_baseline_add_24"
+            android:clickable="true"
+            android:layout_gravity="right"/>
+
         <SearchView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,18 +37,9 @@
             android:layout_marginTop="10dp"
             android:layout_margin="@dimen/text_margin"
             android:id="@+id/Search_viewtext"
-            android:layout_weight="0.2"/>
+            android:layout_gravity="right"/>
 
-        <ImageView
-            android:id="@+id/Add_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:src="@drawable/ic_baseline_add_24"
-            android:layout_weight="0.2"
-            android:clickable="true"/>
-
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         xmlns:app="http://schemas.android.com/apk/res-auto"

@@ -2,16 +2,22 @@ package com.cm.milestone2;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EditFragment extends Fragment {
 
@@ -20,6 +26,35 @@ public class EditFragment extends Fragment {
     private MainViewModel mViewModel;
 
     //TODO fazer OnStop para guardar o conteudo do item que recebeu
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.edit_menu,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        MainInterface listener = (MainInterface) getActivity();
+        switch (item.getItemId()){
+            case R.id.exit_item:
+                Toast.makeText(getContext(), "back clicado", Toast.LENGTH_LONG).show();
+
+                listener.replaceFragment("main");
+            case R.id.save_item:
+                Toast.makeText(getContext(), "save clicado", Toast.LENGTH_LONG).show();
+
+                listener.replaceFragment("main");
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,7 +69,7 @@ public class EditFragment extends Fragment {
         EditText contentEdit = view.findViewById(R.id.titleText);
         contentEdit.setText(content);
 
-        ImageView returnbtn = view.findViewById(R.id.Arrow_return_icon);
+/*        ImageView returnbtn = view.findViewById(R.id.Arrow_return_icon);
         TextView notename = view.findViewById(R.id.Edit_note_name);
 
         // load arguments
@@ -49,7 +84,7 @@ public class EditFragment extends Fragment {
                         .replace(R.id.mainLayout, TitleFragment.class, null)
                         .commit();
             }
-        });
+        });*/
 
         return view;
     }
