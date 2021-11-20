@@ -43,14 +43,17 @@ public class EditFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         MainInterface listener = (MainInterface) getActivity();
+        int iditem = item.getItemId();
         switch (item.getItemId()){
             case R.id.exit_item:
 
                 listener.replaceFragment("main");
+                return super.onOptionsItemSelected(item);
             case R.id.save_item:
                 Toast.makeText(getContext(), "save clicado", Toast.LENGTH_LONG).show();
 
                 listener.replaceFragment("main");
+                return super.onOptionsItemSelected(item);
         }
 
         return super.onOptionsItemSelected(item);

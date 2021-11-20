@@ -31,6 +31,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -125,26 +126,30 @@ public class TitleFragment extends Fragment {
         mViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         View view = inflater.inflate(R.layout.fragment_title_list, container, false);
 
-        // TEMP
+        // Creates an global array that stores all the data
         itemstmep = new ArrayList<NoteItemClass>();
-        //itemstmep.add(new NoteItemClass("1","test","abcs"));
-        //itemstmep.add(new NoteItemClass("2","tost","abcs"));
-        //itemstmep.add(new NoteItemClass("3","tcst","abcs"));
-        //itemstmep.add(new NoteItemClass("4","tvbost","abcs"));
+
 
         // change the name of the toolbar to the name of the project
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
 
         // Add some sample items.
+//        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+//        int defaultValueInt = 0;
+//        String defaultValueString = null;
+//        int size = prefs.getInt("size", defaultValueInt);
+//
+//        for (int i = 0; i < size; i++) {
+//            String title = prefs.getString(String.valueOf(i), defaultValueString);
+//
+//            itemstmep.add(new NoteItemClass(String.valueOf(i), title,"bla bla bla"));
+//        }
+
+        // shared preferences loeader 2.0
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        int defaultValueInt = 0;
-        String defaultValueString = null;
-        int size = prefs.getInt("size", defaultValueInt);
-
-        for (int i = 0; i < size; i++) {
-            String title = prefs.getString(String.valueOf(i), defaultValueString);
-
-            itemstmep.add(new NoteItemClass(String.valueOf(i), title,"bla bla bla"));
+        Map<String, ?> allEntries = prefs.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            itemstmep.add(new NoteItemClass(String.valueOf(entry.getKey()), entry.getValue().toString(),"empty bla bla"));
         }
 
 
@@ -167,6 +172,8 @@ public class TitleFragment extends Fragment {
                 // e todos os dados não procurardos são apagados no recycle view
                 globalSearchView.setQuery("",false);
 
+                String test = itemstmep.toString();
+
                 MainInterface listener = (MainInterface) getActivity();
                 listener.replaceFragment("edit");
 
@@ -188,6 +195,7 @@ public class TitleFragment extends Fragment {
                         }else{
                             int location = itemstmep.indexOf(item);
                             itemstmep.remove(item);
+                            CleanandUpdateSharedPreferences();
                             recyclerView.getAdapter().notifyItemRemoved(location);
                             //recyclerView.getAdapter().notifyItemRangeChanged(location,itemstmep.size());
 
@@ -208,26 +216,55 @@ public class TitleFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-
-        for (int i = 0; i< itemstmep.size(); i++){
-            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
-        }
-        prefsEditor.putInt("size", itemstmep.size());
-        prefsEditor.apply();
+        //UpdateSharedPreferences();
+//        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor prefsEditor = prefs.edit();
+//
+//        for (int i = 0; i< itemstmep.size(); i++){
+//            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
+//        }
+//        prefsEditor.putInt("size", itemstmep.size());
+//        prefsEditor.apply();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        //UpdateSharedPreferences();
+//        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+//        SharedPreferences.Editor prefsEditor = prefs.edit();
+//
+//        for (int i = 0; i< itemstmep.size(); i++){
+//            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
+//        }
+//        prefsEditor.putInt("size", itemstmep.size());
+//        prefsEditor.apply();
+    }
+
+
+    public void UpdateSharedPreferences(){
+        // updates the shared preferences with the values
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = prefs.edit();
 
         for (int i = 0; i< itemstmep.size(); i++){
-            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
+            prefsEditor.putString(itemstmep.get(i).id, itemstmep.get(i).toString());
         }
-        prefsEditor.putInt("size", itemstmep.size());
+        //prefsEditor.putInt("size", itemstmep.size());
+        prefsEditor.apply();
+    }
+
+    public void CleanandUpdateSharedPreferences(){
+        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        // CLean shares preferences
+        prefs.edit().clear().apply();
+
+        // updates the shared preferences with the values
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        for (int i = 0; i< itemstmep.size(); i++){
+            prefsEditor.putString(itemstmep.get(i).id, itemstmep.get(i).toString());
+        }
+        //prefsEditor.putInt("size", itemstmep.size());
         prefsEditor.apply();
     }
 
@@ -280,10 +317,14 @@ public class TitleFragment extends Fragment {
                 String YouEditTextValue = edittext.getText().toString();
 
                 // todo: meter o string id a mudar corretamente para um novo valor
-                NoteItemClass item = new NoteItemClass("3",YouEditTextValue,"");
+                int itemid = MakeUniqueId();
+                NoteItemClass item = new NoteItemClass(String.valueOf(itemid),YouEditTextValue,"");
 
                 itemstmep.add(item);
                 recyclerView.getAdapter().notifyItemInserted(itemstmep.size());
+
+                // update das shared prefrences quando a nota é adicionada
+                UpdateSharedPreferences();
 
             }
         });
@@ -295,6 +336,19 @@ public class TitleFragment extends Fragment {
         });
 
         builder.show();
+
+    }
+
+    private int MakeUniqueId(){
+        // create a new unused id based in the datasets. It assumes the data is organized,
+        // since it uses the next last value available
+
+        if (itemstmep.size() == 0){
+            return 0;
+        } else{
+            int nextid = Integer.parseInt(itemstmep.get(itemstmep.size()-1).id) + 1;
+            return nextid;
+        }
 
     }
 
