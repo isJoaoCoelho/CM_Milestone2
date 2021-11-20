@@ -334,14 +334,23 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
     }
 
     private int MakeUniqueId(){
-        // create a new unused id based in the datasets. It assumes the data is organized,
-        // since it uses the next last value available
+        // create a new unused id based in the datasets. Return the next available number of id
 
         if (itemstmep.size() == 0){
             return 0;
         }
         else{
-            int nextid = Integer.parseInt(itemstmep.get(itemstmep.size()-1).getId()) + 1;
+
+            // search finds the bigest id
+            int bigger = -1;
+            for (NoteItemClass item : itemstmep){
+                if (Integer.parseInt(item.getId())> -1) {
+                    bigger = Integer.parseInt(item.getId());
+                }
+            }
+            // adds 1
+            int nextid = bigger + 1;
+            //int nextid = Integer.parseInt(itemstmep.get(itemstmep.size()-1).getId()) + 1;
             return nextid;
         }
 
