@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +21,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EditFragment extends Fragment implements TaskManager.Callback {
 
     // Variables
     private String NoteName;
@@ -48,8 +52,18 @@ public class EditFragment extends Fragment {
                 listener.replaceFragment("main");
                 return super.onOptionsItemSelected(item);
             case R.id.save_item:
-                Toast.makeText(getContext(), "save clicado", Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "save clicado", Toast.LENGTH_LONG).show();
+                TaskManager taskManager = new TaskManager();
+                //mViewModel.setContent(contentEdit.getText().toString());
+                List<NoteItemClass> list = new ArrayList<>(mViewModel.getList());
+                for(int i = 0; i< list.size() ; i++) {
+                        if(mViewModel.getItem().getId().equals(list.get(i).getId())) {
+                            list.get(i).setDetails(contentEdit.getText().toString());
+                            mViewModel.setList(list);
+                        }
+                }
 
+                taskManager.saveContent(getActivity().getFilesDir().toString(), this, mViewModel.getList(), getContext());
                 listener.replaceFragment("main");
                 return super.onOptionsItemSelected(item);
         }
@@ -63,14 +77,13 @@ public class EditFragment extends Fragment {
 
         mViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
-        String content = mViewModel.getContent();
-        String title = mViewModel.getTitle();
+        NoteItemClass item = mViewModel.getItem();
 
         contentEdit = view.findViewById(R.id.titleText);
-        contentEdit.setText(content);
+        contentEdit.setText(item.getDetails());
 
         // change the name of the toolbar to the name of the note
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(item.getContent());
 
 
         return view;
@@ -80,5 +93,15 @@ public class EditFragment extends Fragment {
     public void onStop() {
         // todo save content of note
         super.onStop();
+    }
+
+    @Override
+    public void onCompleteGet(List<NoteItemClass> list) {
+
+    }
+
+    @Override
+    public void onCompleteSave(List<NoteItemClass> list) {
+        mViewModel.setList(list);
     }
 }

@@ -6,22 +6,36 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity implements MainInterface {
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class MainActivity extends AppCompatActivity implements MainInterface, TaskManager.Callback {
+
+    List<NoteItemClass> list = new ArrayList<>();
+    MainViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        populateList();
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .setReorderingAllowed(true)
                     .add(R.id.mainLayout, TitleFragment.class, null)
                     .commit();
         }
-        MainViewModel mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        //Get content of notes
+
 
 
     }
@@ -40,5 +54,55 @@ public class MainActivity extends AppCompatActivity implements MainInterface {
             fragmentTransaction.replace(R.id.mainLayout, fragment, fragment.toString());
             fragmentTransaction.commit();
         }
+    }
+
+    public void populateList(){
+        //Carregar do ficeiro de preferences
+        //indexar aos items
+        //Carregar do internal storage
+        //colocar no viewmodel
+
+
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        Map<String, ?> allEntries = prefs.getAll();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            list.add(new NoteItemClass(String.valueOf(entry.getKey()), entry.getValue().toString(),""));
+        }
+
+
+        getContent(getFilesDir().toString(), this, list, this);
+
+
+    }
+
+    public void getContent(String path, TaskManager.Callback callback, List<NoteItemClass> list, Context context) {
+
+        Scanner scan;
+        //scan = new Scanner(context.openFileInput("notes_ids.txt"));
+
+        for (int j = 0; j < list.size(); j++) {
+            try{
+                //Por try catch
+                scan = new Scanner(context.openFileInput(list.get(j).getId() + ".txt"));
+                String details = scan.nextLine();
+                list.get(j).setDetails(details);
+                scan.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        //String[] array = content.split(separator);
+        mViewModel.setList(list);
+    }
+
+    @Override
+    public void onCompleteGet(List<NoteItemClass> list) {
+        this.list = new ArrayList<>(list);
+        mViewModel.setList(list);
+    }
+
+    @Override
+    public void onCompleteSave(List<NoteItemClass> list) {
+
     }
 }

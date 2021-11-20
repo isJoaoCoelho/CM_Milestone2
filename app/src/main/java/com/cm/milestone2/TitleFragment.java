@@ -5,18 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,16 +16,22 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * A fragment representing a list of Items.
  */
-public class TitleFragment extends Fragment {
+public class TitleFragment extends Fragment implements TaskManager.Callback{
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
@@ -127,17 +121,26 @@ public class TitleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_title_list, container, false);
 
         // Creates an global array that stores all the data
-        itemstmep = new ArrayList<NoteItemClass>();
+        if(mViewModel.getList().size() == 0) {
+            itemstmep = new ArrayList<NoteItemClass>();
+        }else {
+            itemstmep = mViewModel.getList();
+        }
 
         // change the name of the toolbar to the name of the project
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
 
         // shared preferences loeader 2.0
-        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        /*SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         Map<String, ?> allEntries = prefs.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             itemstmep.add(new NoteItemClass(String.valueOf(entry.getKey()), entry.getValue().toString(),""));
-        }
+        }*/
+        //mViewModel.setList(itemstmep);
+
+        //Get content of notes
+        //TaskManager taskManager = new TaskManager();
+        //taskManager.getContent(getActivity().getFilesDir().toString(), this, itemstmep, view.getContext());
 
 
         // Set the adapter
@@ -148,12 +151,15 @@ public class TitleFragment extends Fragment {
         } else {
             recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+
         globaladapter = new TitleRecyclerViewAdapter(itemstmep, new TitleRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NoteItemClass item) {
-
-                mViewModel.setTitle(item.getContent());
-                mViewModel.setContent(item.getDetails());
+                //mViewModel.setTitle(item.getContent());
+                //mViewModel.setContent(item.getDetails());
+                //mViewModel.setList(itemstmep);
+                //mViewModel.setId(item.getId());
+                mViewModel.setItem(item);
 
                 // Apaga o querry do search view. Resolve o problema quando se passa para outro fragment enquanto se pesquisa
                 // e todos os dados não procurardos são apagados no recycle view
@@ -181,7 +187,8 @@ public class TitleFragment extends Fragment {
                         }else{
                             int location = itemstmep.indexOf(item);
                             itemstmep.remove(item);
-                            UpdateIds();
+                            mViewModel.setList(itemstmep);
+                            //UpdateIds();
                             CleanandUpdateSharedPreferences();
                             //recyclerView.getAdapter().notifyItemRemoved(location);
                             recyclerView.getAdapter().notifyDataSetChanged();
@@ -201,7 +208,7 @@ public class TitleFragment extends Fragment {
     }
 
     private void UpdateIds() {
-        if(itemstmep.size()>0) {
+        /*if(itemstmep.size()>0) {
             if (Integer.parseInt(itemstmep.get(0).getId()) > 0) {
                 itemstmep.get(0).setId("0");
             }
@@ -214,7 +221,7 @@ public class TitleFragment extends Fragment {
                     itemstmep.get(i).setId(String.valueOf(updatedId));
                 }
             }
-        }
+        }*/
     }
 
     @Override
@@ -307,9 +314,11 @@ public class TitleFragment extends Fragment {
 
                     itemstmep.add(item);
                     recyclerView.getAdapter().notifyItemInserted(itemstmep.size());
+                    mViewModel.setList(itemstmep);
 
                     // update das shared prefrences quando a nota é adicionada
                     UpdateSharedPreferences();
+
                 }
             }
         });
@@ -339,4 +348,19 @@ public class TitleFragment extends Fragment {
     }
 
 
+    @Override
+    public void onCompleteGet(List<NoteItemClass> list) {
+        Toast.makeText(getActivity(), "Notas carregadas!" , Toast.LENGTH_LONG).show();
+        itemstmep = new ArrayList<>(list);
+        mViewModel.setList(list);
+    }
+
+    @Override
+    public void onCompleteSave(List<NoteItemClass> list) {
+        itemstmep = new ArrayList<>(list);
+        mViewModel.setList(list);
+        //TaskManager taskManager = new TaskManager();
+        //taskManager.getContent(getActivity().getFilesDir().toString(), this, mViewModel.getList(), getContext());
+
+    }
 }
