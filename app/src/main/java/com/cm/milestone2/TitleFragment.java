@@ -268,9 +268,11 @@ public class TitleFragment extends Fragment {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
 
-                int location = itemstmep.indexOf(item);
-                itemstmep.get(location).setContent(YouEditTextValue);
-                recyclerView.getAdapter().notifyItemChanged(location);
+                if(!YouEditTextValue.isEmpty()) {
+                    int location = itemstmep.indexOf(item);
+                    itemstmep.get(location).setContent(YouEditTextValue);
+                    recyclerView.getAdapter().notifyItemChanged(location);
+                }
 
             }
         });
@@ -298,15 +300,17 @@ public class TitleFragment extends Fragment {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
 
-                int itemid = MakeUniqueId();
-                NoteItemClass item = new NoteItemClass(String.valueOf(itemid),YouEditTextValue,"");
+                if(!YouEditTextValue.isEmpty()) {
 
-                itemstmep.add(item);
-                recyclerView.getAdapter().notifyItemInserted(itemstmep.size());
+                    int itemid = MakeUniqueId();
+                    NoteItemClass item = new NoteItemClass(String.valueOf(itemid), YouEditTextValue, "");
 
-                // update das shared prefrences quando a nota é adicionada
-                UpdateSharedPreferences();
+                    itemstmep.add(item);
+                    recyclerView.getAdapter().notifyItemInserted(itemstmep.size());
 
+                    // update das shared prefrences quando a nota é adicionada
+                    UpdateSharedPreferences();
+                }
             }
         });
 
