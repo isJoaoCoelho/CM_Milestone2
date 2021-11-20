@@ -51,18 +51,15 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
         public final TextView mContentView;
         public NoteItemClass mItem;
 
         public ViewHolder(@NonNull FragmentTitleBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
             mContentView = binding.content;
         }
 
         public void bind(final NoteItemClass item, final OnItemClickListener listener){
-            mIdView.setText(item.getId());
             mContentView.setText(item.getContent());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 public class TaskManager {
     final Executor executor = Executors.newSingleThreadExecutor();
     final Handler handler = new Handler(Looper.getMainLooper());
-    final String separator = "---";
 
     public interface Callback {
         void onCompleteGet(List<NoteItemClass> list);
@@ -42,6 +41,20 @@ public class TaskManager {
             }
             handler.post(() -> {
                 callback.onCompleteSave(list);
+            });
+        });
+    }
+
+    public void deleteItem(Callback callback, NoteItemClass item, Context context) {
+        executor.execute(() -> {
+            try{
+                context.deleteFile(item.getId() + ".txt");
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            handler.post(() -> {
+                //callback.onCompleteSave(list);
             });
         });
     }

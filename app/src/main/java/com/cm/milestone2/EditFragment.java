@@ -91,7 +91,6 @@ public class EditFragment extends Fragment implements TaskManager.Callback {
 
     @Override
     public void onStop() {
-        // todo save content of note
         super.onStop();
     }
 

@@ -65,13 +65,36 @@ public class MainActivity extends AppCompatActivity implements MainInterface, Ta
 
         SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
         Map<String, ?> allEntries = prefs.getAll();
+
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+
             list.add(new NoteItemClass(String.valueOf(entry.getKey()), entry.getValue().toString(),""));
         }
-
+        list = orderList(list);
 
         getContent(getFilesDir().toString(), this, list, this);
 
+
+    }
+
+    public List<NoteItemClass> orderList(List<NoteItemClass> list){
+        List<NoteItemClass> tempList = new ArrayList<>(list);
+        List<NoteItemClass> returnList = new ArrayList<>();
+
+        while(tempList.size() != 0){
+            int menorID = -1;
+            int menor = Integer.MAX_VALUE;
+            for(int i = 0; i < tempList.size(); i++){
+                if(Integer.parseInt(tempList.get(i).getId()) < menor){
+                    menor = Integer.parseInt(tempList.get(i).getId());
+                    menorID = i;
+                }
+            }
+            returnList.add(tempList.get(menorID));
+            tempList.remove(menorID);
+
+        }
+        return returnList;
 
     }
 

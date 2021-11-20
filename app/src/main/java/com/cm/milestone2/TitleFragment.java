@@ -98,9 +98,23 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
             @Override
             public boolean onQueryTextChange(String s) {
                 globaladapter.getFilter().filter(s);
+                menu.findItem(R.id.add_item_bar).setVisible(false);
                 return false;
             }
+
+
         });
+
+        globalSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                //Toast.makeText(getActivity(), "Fechei a search", Toast.LENGTH_SHORT).show();
+                menu.findItem(R.id.add_item_bar).setVisible(true);
+                return false;
+
+            }
+        });
+
 
     }
 
@@ -122,7 +136,7 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
 
         // Creates an global array that stores all the data
         if(mViewModel.getList().size() == 0) {
-            itemstmep = new ArrayList<NoteItemClass>();
+            itemstmep = new ArrayList<>();
         }else {
             itemstmep = mViewModel.getList();
         }
@@ -187,6 +201,8 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
                         }else{
                             int location = itemstmep.indexOf(item);
                             itemstmep.remove(item);
+                            TaskManager taskManager = new TaskManager();
+                            taskManager.deleteItem(TitleFragment.this, item, getContext());
                             mViewModel.setList(itemstmep);
                             //UpdateIds();
                             CleanandUpdateSharedPreferences();
@@ -279,6 +295,7 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
                     int location = itemstmep.indexOf(item);
                     itemstmep.get(location).setContent(YouEditTextValue);
                     recyclerView.getAdapter().notifyItemChanged(location);
+                    UpdateSharedPreferences();
                 }
 
             }
@@ -298,14 +315,16 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
         // cria dialog box com opção de aceitar ou não e com edittext... altera também no recycler view isso
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        EditText editText = new EditText(getContext());
         final EditText edittext = new EditText(getContext());
+
+        edittext.setSingleLine();
 
         builder.setTitle(R.string.Add_name_title);
         builder.setView(edittext);
         builder.setPositiveButton(R.string.Add_name_value, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
+
 
                 if(!YouEditTextValue.isEmpty()) {
 
@@ -344,14 +363,12 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
             // search finds the bigest id
             int bigger = -1;
             for (NoteItemClass item : itemstmep){
-                if (Integer.parseInt(item.getId())> -1) {
+                if (Integer.parseInt(item.getId()) > bigger) {
                     bigger = Integer.parseInt(item.getId());
                 }
             }
             // adds 1
-            int nextid = bigger + 1;
-            //int nextid = Integer.parseInt(itemstmep.get(itemstmep.size()-1).getId()) + 1;
-            return nextid;
+            return bigger + 1;
         }
 
     }
@@ -359,7 +376,7 @@ public class TitleFragment extends Fragment implements TaskManager.Callback{
 
     @Override
     public void onCompleteGet(List<NoteItemClass> list) {
-        Toast.makeText(getActivity(), "Notas carregadas!" , Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), "Notas carregadas!" , Toast.LENGTH_LONG).show();
         itemstmep = new ArrayList<>(list);
         mViewModel.setList(list);
     }
