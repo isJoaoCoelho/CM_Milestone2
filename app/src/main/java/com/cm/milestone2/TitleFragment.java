@@ -129,27 +129,14 @@ public class TitleFragment extends Fragment {
         // Creates an global array that stores all the data
         itemstmep = new ArrayList<NoteItemClass>();
 
-
         // change the name of the toolbar to the name of the project
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
-
-        // Add some sample items.
-//        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-//        int defaultValueInt = 0;
-//        String defaultValueString = null;
-//        int size = prefs.getInt("size", defaultValueInt);
-//
-//        for (int i = 0; i < size; i++) {
-//            String title = prefs.getString(String.valueOf(i), defaultValueString);
-//
-//            itemstmep.add(new NoteItemClass(String.valueOf(i), title,"bla bla bla"));
-//        }
 
         // shared preferences loeader 2.0
         SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         Map<String, ?> allEntries = prefs.getAll();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            itemstmep.add(new NoteItemClass(String.valueOf(entry.getKey()), entry.getValue().toString(),"empty bla bla"));
+            itemstmep.add(new NoteItemClass(String.valueOf(entry.getKey()), entry.getValue().toString(),""));
         }
 
 
@@ -165,8 +152,8 @@ public class TitleFragment extends Fragment {
             @Override
             public void onItemClick(NoteItemClass item) {
 
-                mViewModel.setTitle(item.content);
-                mViewModel.setContent(item.details);
+                mViewModel.setTitle(item.getContent());
+                mViewModel.setContent(item.getDetails());
 
                 // Apaga o querry do search view. Resolve o problema quando se passa para outro fragment enquanto se pesquisa
                 // e todos os dados não procurardos são apagados no recycle view
@@ -181,23 +168,23 @@ public class TitleFragment extends Fragment {
 
             @Override
             public void onLongItemClick(NoteItemClass item) {
-                //Toast.makeText(getContext(), "Item Long Clicked", Toast.LENGTH_LONG).show();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                 builder.setTitle(R.string.Opcao).setItems(R.array.PopUpOption, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0){
-                            //recyclerView.getAdapter().notifyItemRemoved(Integer.parseInt(item.id)-1);
+                            //recyclerView.getAdapter().notifyItemRemoved(Integer.parseInt(item.getId())-1);
                             dialog.cancel();
                             changetext(item,itemstmep,recyclerView);
 
                         }else{
                             int location = itemstmep.indexOf(item);
                             itemstmep.remove(item);
+                            UpdateIds();
                             CleanandUpdateSharedPreferences();
-                            recyclerView.getAdapter().notifyItemRemoved(location);
-                            //recyclerView.getAdapter().notifyItemRangeChanged(location,itemstmep.size());
+                            //recyclerView.getAdapter().notifyItemRemoved(location);
+                            recyclerView.getAdapter().notifyDataSetChanged();
 
                         }
 
@@ -213,32 +200,31 @@ public class TitleFragment extends Fragment {
         return view;
     }
 
+    private void UpdateIds() {
+        if(itemstmep.size()>0) {
+            if (Integer.parseInt(itemstmep.get(0).getId()) > 0) {
+                itemstmep.get(0).setId("0");
+            }
+            for (int i = 1; i < itemstmep.size(); i++) {
+                int itemId = Integer.parseInt(itemstmep.get(i).getId());
+                int previousId = Integer.parseInt(itemstmep.get(i - 1).getId());
+
+                if (itemId - previousId > 1) {
+                    int updatedId = previousId + 1;
+                    itemstmep.get(i).setId(String.valueOf(updatedId));
+                }
+            }
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
-        //UpdateSharedPreferences();
-//        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-//        SharedPreferences.Editor prefsEditor = prefs.edit();
-//
-//        for (int i = 0; i< itemstmep.size(); i++){
-//            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
-//        }
-//        prefsEditor.putInt("size", itemstmep.size());
-//        prefsEditor.apply();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        //UpdateSharedPreferences();
-//        SharedPreferences prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-//        SharedPreferences.Editor prefsEditor = prefs.edit();
-//
-//        for (int i = 0; i< itemstmep.size(); i++){
-//            prefsEditor.putString(String.valueOf(i), itemstmep.get(i).toString());
-//        }
-//        prefsEditor.putInt("size", itemstmep.size());
-//        prefsEditor.apply();
     }
 
 
@@ -248,9 +234,8 @@ public class TitleFragment extends Fragment {
         SharedPreferences.Editor prefsEditor = prefs.edit();
 
         for (int i = 0; i< itemstmep.size(); i++){
-            prefsEditor.putString(itemstmep.get(i).id, itemstmep.get(i).toString());
+            prefsEditor.putString(itemstmep.get(i).getId(), itemstmep.get(i).toString());
         }
-        //prefsEditor.putInt("size", itemstmep.size());
         prefsEditor.apply();
     }
 
@@ -262,20 +247,18 @@ public class TitleFragment extends Fragment {
         // updates the shared preferences with the values
         SharedPreferences.Editor prefsEditor = prefs.edit();
         for (int i = 0; i< itemstmep.size(); i++){
-            prefsEditor.putString(itemstmep.get(i).id, itemstmep.get(i).toString());
+            prefsEditor.putString(itemstmep.get(i).getId(), itemstmep.get(i).toString());
         }
-        //prefsEditor.putInt("size", itemstmep.size());
         prefsEditor.apply();
     }
 
     private void changetext(NoteItemClass item, List<NoteItemClass> itemstmep, RecyclerView recyclerView) {
-        // todo: meter tudo em strings e arranjar codigo
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         EditText editText = new EditText(getContext());
 
         final EditText edittext = new EditText(getContext());
-        edittext.setHint(item.content);
+        edittext.setHint(item.getContent());
 
         builder.setTitle(R.string.Context_change_text_label);
 
@@ -285,9 +268,8 @@ public class TitleFragment extends Fragment {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
 
-                // todo: meter com setter and getter os valores de item - CASO ACHEM Q FOR PRECISO
                 int location = itemstmep.indexOf(item);
-                itemstmep.get(location).content = YouEditTextValue;
+                itemstmep.get(location).setContent(YouEditTextValue);
                 recyclerView.getAdapter().notifyItemChanged(location);
 
             }
@@ -316,7 +298,6 @@ public class TitleFragment extends Fragment {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String YouEditTextValue = edittext.getText().toString();
 
-                // todo: meter o string id a mudar corretamente para um novo valor
                 int itemid = MakeUniqueId();
                 NoteItemClass item = new NoteItemClass(String.valueOf(itemid),YouEditTextValue,"");
 
@@ -345,8 +326,9 @@ public class TitleFragment extends Fragment {
 
         if (itemstmep.size() == 0){
             return 0;
-        } else{
-            int nextid = Integer.parseInt(itemstmep.get(itemstmep.size()-1).id) + 1;
+        }
+        else{
+            int nextid = Integer.parseInt(itemstmep.get(itemstmep.size()-1).getId()) + 1;
             return nextid;
         }
 

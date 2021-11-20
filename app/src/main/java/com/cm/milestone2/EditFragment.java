@@ -25,9 +25,7 @@ public class EditFragment extends Fragment {
     // Variables
     private String NoteName;
     private MainViewModel mViewModel;
-
-    //TODO fazer OnStop para guardar o conteudo do item que recebeu
-
+    private EditText contentEdit;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,13 +61,12 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //TODO mostrar conteudo do item que recebeu - sem ser o bla bla bla... Im looking at you balsas
         mViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
         String content = mViewModel.getContent();
         String title = mViewModel.getTitle();
 
-        EditText contentEdit = view.findViewById(R.id.titleText);
+        contentEdit = view.findViewById(R.id.titleText);
         contentEdit.setText(content);
 
         // change the name of the toolbar to the name of the note
@@ -77,5 +74,11 @@ public class EditFragment extends Fragment {
 
 
         return view;
+    }
+
+    @Override
+    public void onStop() {
+        // todo save content of note
+        super.onStop();
     }
 }

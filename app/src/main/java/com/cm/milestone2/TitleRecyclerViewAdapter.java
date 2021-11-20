@@ -62,8 +62,8 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
         }
 
         public void bind(final NoteItemClass item, final OnItemClickListener listener){
-            mIdView.setText(item.id);
-            mContentView.setText(item.content);
+            mIdView.setText(item.getId());
+            mContentView.setText(item.getContent());
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -102,7 +102,7 @@ public class TitleRecyclerViewAdapter extends RecyclerView.Adapter<TitleRecycler
                 String filterPattern = charSequence.toString().toLowerCase().trim();
 
                 for (NoteItemClass item : mValuesFull){
-                    if (item.content.toLowerCase().contains(filterPattern)){
+                    if (item.getContent().toLowerCase().contains(filterPattern)){
                         filteredList.add(item);
                     }
                 }

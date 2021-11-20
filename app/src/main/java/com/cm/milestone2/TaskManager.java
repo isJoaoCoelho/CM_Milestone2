@@ -25,7 +25,7 @@ public class TaskManager {
             try{
                 PrintStream ps = new PrintStream(context.openFileOutput("notes.txt", context.MODE_PRIVATE));
                 for(int i = 0; i < list.size(); i++){
-                    ps.print(list.get(i).details + separator);
+                    ps.print(list.get(i).getDetails() + separator);
                 }
                 ps.close();
 
@@ -53,8 +53,8 @@ public class TaskManager {
                 String[] array = content.split(separator);
                 if(array.length > 0) {
                     for(int i = 0; i < array.length; i++) {
-                        if(Integer.parseInt(list.get(i).id) == i){
-                            list.get(i).details = array[i];
+                        if(Integer.parseInt(list.get(i).getId()) == i){
+                            list.get(i).setDetails(array[i]);
                         }
 
                     }
